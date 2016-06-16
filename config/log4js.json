@@ -1,0 +1,26 @@
+{
+  "appenders": [
+    {
+      "type": "console",
+      "category": "console"
+    },
+    {
+      "type": "dateFile",
+      "filename": "logs/",
+      "pattern": "acce-yyyyMMddhh.txt",
+      "alwaysIncludePattern": true,
+      "maxLogSize": "1024 * 1024",
+      "backups": 3,
+      "category": "normal"
+    }
+  ],
+  "replaceConsole": true,
+  "levels":
+  {
+    "log_url":"ALL",
+    "log_stat": "ALL",
+    "log_trace":"ALL",
+    "log_error":"ALL",
+    "log_todo":"ALL"
+  }
+}
