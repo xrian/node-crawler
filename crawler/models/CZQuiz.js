@@ -48,19 +48,19 @@ module.exports = function(sequelize,Sequelize){
 				'comment' : '问题描述详情id'
 			},
 			'comment' : {
-				'type' : Sequelize.STRING(20),
+				'type' : Sequelize.STRING(64),
 				'allowNull': true,
 				'comment' : '评论数'
 			},
 			'follow' : {
-				'type' : Sequelize.STRING(20),
+				'type' : Sequelize.STRING(64),
 				'allowNull': true,
-				'comment' : '关注该问题的人数'
+				'comment' : '知乎中的记录id'
 			},
 			'answer' : {
-				'type' : Sequelize.STRING(20),
+				'type' : Sequelize.STRING(64),
 				'allowNull': true,
-				'comment' : '多少个回答'
+				'comment' : '关注该问题的人数'
 			},
 			'remark' : {
 				'type' : Sequelize.STRING(500),
@@ -80,7 +80,7 @@ module.exports = function(sequelize,Sequelize){
 				'comment' : '应用id'
 			}
 		},{
-			comment : '知乎中的回答表',
+			comment : '知乎中的问题表',
 			timestamps : true,
 			paranoid : true,
 			deletedAt : 'deleted_at', //删除字段deletedAt别名

@@ -3,7 +3,7 @@
  */
 
 var moment = require('moment');
-var logger = require('../../utils/log4js.js').logger;
+var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 var servlet={};
 var CZQuiz = require('../models/index.js').CZQuiz;
 

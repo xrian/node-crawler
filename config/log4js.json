@@ -10,8 +10,7 @@
       "pattern": "acce-yyyyMMddhh.txt",
       "alwaysIncludePattern": true,
       "maxLogSize": "1024 * 1024",
-      "backups": 3,
-      "category": "normal"
+      "backups": 3
     }
   ],
   "replaceConsole": true,

@@ -5,9 +5,9 @@
 var moment = require('moment');
 var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 var servlet={};
-var CZAnswer = require('../models/index.js').CZAnswer;
+var CZError = require('../models/index.js').CZError;
 
-servlet.CZAnswer = CZAnswer;
+servlet.CZError = CZError;
 
 /**
  * 保存方法
@@ -15,12 +15,11 @@ servlet.CZAnswer = CZAnswer;
  * @param map       参数集合
  */
 servlet.save = function(callback,map){
-	CZAnswer.build(map).save().then(function(result){
-		logger.info('保存CZAnswer表成功');
+	CZError.build(map).save().then(function(result){
+		logger.info('保存CZError表成功:'+result.id);
 		callback(result);
-	}).catch(function(err){
-		logger.error('保存回答表出错:'+err);
 	});
 };
+
 
 module.exports = servlet;

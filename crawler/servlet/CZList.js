@@ -3,7 +3,7 @@
  */
 
 var moment = require('moment');
-var logger = require('../../utils/log4js.js').logger;
+var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 var servlet={};
 var CZList = require('../models/index.js').CZList;
 
@@ -21,16 +21,39 @@ servlet.save = function(callback,map){
 	});
 };
 
+/**
+ * 通用的删除方法,根据map内容删除数据
+ * @param callback
+ * @param map
+ */
 servlet.del = function(callback,map){
-	try{
-		CZList.destroy(map).then(function(result){
+	CZList.destroy(map).then(function(result){
+		if(callback){
 			callback();
-		}).catch(function(err){
-			logger.error('爬取【' + map.where.uid + '】用户信息结束,删除c_z_list表数据,删除失败:' + err);
-		});
-	}catch(e){
-		logger.error('删除错误,莫非是我方法写错了?'+e);
-	}
+		}
+	}).catch(function(err){
+		logger.error('爬取【' + map.where.uid + '】用户信息结束,删除c_z_list表数据,删除失败:' + err);
+	});
+};
+
+/**
+ * 根据uid和code删除c_z_list表中数据
+ * @param callback
+ * @param map
+ */
+servlet.delByCode = function(callback, uid, code ){
+	CZList.destroy({
+		where :{
+			uid : uid,
+			code : code
+		}
+	}).then(function(result){
+		if(callback){
+			callback(null);
+		}
+	}).catch(function(err){
+		logger.error('爬取【' + uid + '】用户信息结束,删除c_z_list表数据,删除失败:' + err);
+	});
 };
 
 /**
@@ -38,9 +61,22 @@ servlet.del = function(callback,map){
  * @param callback
  * @param map
  */
-servlet.queryByAll = function(callback){
-	CZList.findAll({
+servlet.queryAll = function(callback,map){
+	CZList.findAll(map).then(function(result){
+		callback(result);
+	});
+};
 
+/**
+ * 查询CZList表全部数据
+ * @param callback
+ * @param map
+ */
+servlet.queryAllByCode = function(callback,code){
+	CZList.findAll({
+		where : {
+			code : code
+		}
 	}).then(function(result){
 		callback(result);
 	});

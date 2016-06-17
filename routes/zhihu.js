@@ -4,9 +4,9 @@
 
 var express = require('express');
 var router = express.Router();
-var zhihuController = require('../controller/zhihu.js');
-var peopleController = require('../controller/user.js');
-var quizController = require('../controller/quiz.js');
+var zhihuController = require('../crawler/controller/zhihu.js');
+var peopleController = require('../crawler/controller/user.js');
+var quizController = require('../crawler/controller/quiz.js');
 
 router.all('/',function(req,res,next){
 	zhihuController.login(req,res,next);
@@ -25,7 +25,7 @@ router.all('/tags',function(req,res,next){
 });
 
 router.all('/test',function(req,res,next){
-	zhihuController.peopleInfo('hwb986',function(){
+	peopleController.peopleInfo('Barachan',function(){
 		console.log('最后一行代码');
 	});
 	res.send('好艰难,别报错啊');
@@ -39,7 +39,7 @@ router.all('/people',function(req,res,next){
 });
 //
 router.all('/testRE',function(req,res,next){
-	peopleController.testRE();
+	peopleController.getPeopleInfo();
 	res.send('2222222222');
 });
 
@@ -49,7 +49,8 @@ router.all('/config',function(req,res,next){
 });
 
 router.all('/quiz',function(req,res,next){
-	quizController.index('28387118');
+//	quizController.index('28387118');
+	quizController.openQuizUrl('47533656');
 	res.send('2222222222');
 });
 

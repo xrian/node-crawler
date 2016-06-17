@@ -3,7 +3,7 @@
  */
 
 var moment = require('moment');
-var logger = require('../../utils/log4js.js').logger;
+var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 var servlet={};
 var CZQuizTags = require('../models/index.js').CZQuizTags;
 
@@ -16,8 +16,21 @@ servlet.CZQuizTags = CZQuizTags;
  */
 servlet.save = function(callback,map){
 	CZQuizTags.build(map).save().then(function(result){
-		console.log('保存CZQuizTags表成功');
-		callback(result);
+		if(callback){
+			callback(result);
+		}
+	});
+};
+//destroy
+servlet.delByQuiz = function(callback,quiz){
+	CZQuizTags.destroy({
+		where : {
+			quizId : quiz
+		}
+	}).then(function(result){
+		if(callback){
+			callback();
+		}
 	});
 };
 

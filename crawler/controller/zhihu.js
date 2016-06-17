@@ -9,7 +9,7 @@ var cheerio = require('cheerio');
 var url=require('url');
 var qs=require('querystring');
 var router = express.Router();
-var logger = require('../../utils/log4js.js').logger;
+var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 
 var cookies = require('../../utils/zhihu.js');
 var zhihulogin = require('./login.js');

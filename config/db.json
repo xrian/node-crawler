@@ -1,7 +1,7 @@
 {
   "username":"root",
   "password":"root",
-  "database":"blog-website",
+  "database":"node-crawler",
   "options":{
     "dialect":"mysql",
     "host":"127.0.0.1"

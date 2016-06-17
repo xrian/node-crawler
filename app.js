@@ -9,42 +9,21 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+//log4js的模块化还有点问题,先这样用着吧,能正常使用就行,有时候再研究如何封装
 var log = require('./utils/log4js.js');
 log.use(app);
-var logger=log.logger;
+var logger=log.log4js.getLogger(__filename);;
 
-var zhihu = require('./crawler/routes/zhihu.js');
-/*
-var log4js = require('log4js');
-log4js.configure('log4js/log4js.json');
+var zhihu = require('./routes/zhihu.js');
 
-var loggers= log4js.getLogger('normal');
-loggers.setLevel('ALL');
-app.use(log4js.connectLogger(loggers, {level:log4js.levels.INFO}));
-*/
-/*
-var log4js = require("log4js");
-var log4js_config =JSON.parse(fs.readFileSync("log4js/log4js.json", "utf8"));
-log4js.configure(log4js_config);
-*/
 
-/*
-var LogFile = log4js.getLogger('normal');
-
-*/
-
-console.log("log_start end!");
-
-console.info('开始测试');
-
-//loggers.info('开始测试哈哈哈哈哈');
-logger.info('log4js配置完成');
+logger.info("log_start end!");
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 //app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

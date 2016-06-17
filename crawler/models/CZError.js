@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = function(sequelize,Sequelize){
-	var CZQuizLog = sequelize.define(
-		'CZQuizLog',
+	var CZError = sequelize.define(
+		'CZError',
 		{
 			'id' : {
 				'type' : Sequelize.UUID,
@@ -10,42 +10,32 @@ module.exports = function(sequelize,Sequelize){
 				'unique' : true,				//是否唯一
 				'allowNull': false,
 				'defaultValue' : Sequelize.UUIDV4,
-				'comment' : '知乎问题表id'
+				'comment' : 'id'
 			},
-			'pid' : {
+			'type' : {
 				'type' : Sequelize.STRING(64),
 				'allowNull': true,
-				'comment' : '旧记录id'
+				'comment' : '类型(提示,警告,错误)'
+			},
+			'filename' : {
+				'type' : Sequelize.STRING(64),
+				'allowNull': true,
+				'comment' : '文件名'
 			},
 			'uid' : {
 				'type' : Sequelize.STRING(64),
 				'allowNull': true,
-				'comment' : '知乎中的记录id'
+				'comment' : '录id'
 			},
-			'href' : {
-				'type' : Sequelize.STRING(500),
+			'maybe' : {
+				'type' : Sequelize.STRING(200),
 				'allowNull': true,
-				'comment' : '访问地址'
+				'comment' : '可能的原因'
 			},
-			'name' : {
-				'type' : Sequelize.STRING(64),
+			'msg' : {
+				'type' : Sequelize.STRING(2000),
 				'allowNull': true,
-				'comment' : '标题'
-			},
-			'cid' : {
-				'type' : Sequelize.STRING(64),
-				'allowNull': true,
-				'comment' : 'count的值'
-			},
-			'detail' : {
-				'type' : Sequelize.TEXT,
-				'allowNull': true,
-				'comment' : '回答详情'
-			},
-			'rid' : {
-				'type' : Sequelize.STRING(20),
-				'allowNull': true,
-				'comment' : 'r  id'
+				'comment' : '错误提示'
 			},
 			'remark' : {
 				'type' : Sequelize.STRING(500),
@@ -65,14 +55,14 @@ module.exports = function(sequelize,Sequelize){
 				'comment' : '应用id'
 			}
 		},{
-			comment : '知乎中的回答表',
+			comment : '错误表',
 			timestamps : true,
 			paranoid : true,
 			deletedAt : 'deleted_at', //删除字段deletedAt别名
 			freezeTableName : true,   //是否自定义表名
-			tableName : 'c_z_quiz_log', //自定义表名
+			tableName : 'c_z_error', //自定义表名
 			underscored : true    //使用驼峰命名法
 		}
 	);
-	return CZQuizLog;
+	return CZError;
 }

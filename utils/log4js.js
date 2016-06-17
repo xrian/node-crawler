@@ -10,7 +10,7 @@ var path = require('path');
 var filePath = path.join(__dirname, '..', 'config', 'log4js.json');
 var log4js_config =JSON.parse(fs.readFileSync(filePath, "utf8"));
 log4js.configure(log4js_config);
-var logger = log4js.getLogger('normal');
+var logger = log4js.getLogger(__dirname);
 
 
 //配合express用的方法
@@ -20,3 +20,4 @@ exports.use = function(app) {
 }
 
 exports.logger = logger;
+exports.log4js = log4js;
