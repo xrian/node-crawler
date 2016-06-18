@@ -8,6 +8,8 @@ var zhihuController = require('../crawler/controller/zhihu.js');
 var peopleController = require('../crawler/controller/user.js');
 var quizController = require('../crawler/controller/quiz.js');
 
+var followController = require('../crawler/controller/follow.js');
+
 router.all('/',function(req,res,next){
 	zhihuController.login(req,res,next);
 });
@@ -50,12 +52,21 @@ router.all('/config',function(req,res,next){
 
 router.all('/quiz',function(req,res,next){
 //	quizController.index('28387118');
-	quizController.openQuizUrl('47533656');
+	quizController.crawlerQuiz();
 	res.send('2222222222');
 });
 
 router.all('/main',function(req,res,next){
 	quizController.main(req,res,next);
+	res.send('33333333333');
+});
+
+router.all('/follow',function(req,res,next){
+	var map = {
+		start:0,
+		offset:0
+	};
+	followController.quizFollowNext(map,'41220946');
 	res.send('33333333333');
 });
 

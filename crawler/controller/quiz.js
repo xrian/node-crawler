@@ -61,7 +61,7 @@ function main(req,res,next){
 	});
 }
 
-//
+//根据c_z_list中问题id爬取数据
 function crawlerQuiz(){
 	var configMap = _systemConfig.configMap;
 	CZList.queryAllByCode(function(quizList){
@@ -70,12 +70,26 @@ function crawlerQuiz(){
 		}
 		logger.info('问题id:'+quizArray);
 		async.eachSeries(quizArray,function(item,callback){
-			openQuizUrl(item);
-			callback(null);
+			var date = moment().subtract(1,'h');
+			var map = {uid : item, created_at :{ $gte : date }};
+			CZQuiz.query(function(result){
+				if(result.length!=0){
+					console.log(typeof result);
+					console.dir(result);
+					console.log('changdu:'+result.length);
+					console.log('113333333333333331:'+result);
+					callback(null);
+				}else{
+					var smap = {uid : map.uid};
+					CZQuiz.delByCode((function(callback,item) {
+						openQuizUrl(callback,item);
+					})(callback,item),smap);
+				}
+			},map);
 		},function(err){
 			//当有一个项目报错或全部执行完会进入到这里
 			if(!err||err==null){
-				logger.error('oops,问题全部爬取完毕!!!'+err);
+				logger.info('oops,问题全部爬取完毕!!!'+err);
 				//getPeopleInfo();
 			}else{
 				logger.error('oops,出错了!!!循环爬取c_z_list表中问题id时抛出异常(callback(err)):'+err);
@@ -94,139 +108,145 @@ function crawlerQuiz(){
 /**
  * 回调金字塔的威力( ｀д′)
  */
-function getPeopleInfo(){
-	var configMap = _systemConfig.configMap;
-	CZList.CZList.findAll({
-		where :{
-			code : 'zhihu_people_about_url'
-		}
-	}).then(function(peopleList){
-		for(var i = 0;i<peopleList.length;i++){
-			peopleArray.push(peopleList[i].uid);
-		}
-		logger.info('个人中心id:'+peopleArray);
-		async.eachSeries(peopleArray,function(item,callback){
-			setTimeout(function(){
-				CZUser.CZUser.findOne({
-					where : {
-						ucode : item
-					}
-				}).then(function(userFindOne){
-					if(!userFindOne){
-						var uri = configMap['zhihu_people_about_url'] + '';
-						uri = uri.replace('@id',item);
-						userController.peopleInfo(uri);
-						CZList.del(function(){
-							logger.info('删除list表用户id成功');
-						},{
-							where : { uid : item }
-						});
-						callback(null);
-					}else{
-						logger.warn('根据peopleArray数组里面的数据,查询c_z_user是否存在该用户,用户已存在:' + userFindOne.id);
-						callback(null);
-					}
-				}).catch(function(err){
-					logger.error('根据peopleArray数组里面的数据,查询c_z_user是否存在该用户,查询出错:' + err);
-				});
-			},configMap['zhihu_get_time'] + 0);
-		},function(err){
-			logger.error('oops,出错了!!!'+err);
-			main();
-		});
-	});
-}
+//function getPeopleInfo(){
+//	var configMap = _systemConfig.configMap;
+//	CZList.CZList.findAll({
+//		where :{
+//			code : 'zhihu_people_about_url'
+//		}
+//	}).then(function(peopleList){
+//		for(var i = 0;i<peopleList.length;i++){
+//			peopleArray.push(peopleList[i].uid);
+//		}
+//		logger.info('个人中心id:'+peopleArray);
+//		async.eachSeries(peopleArray,function(item,callback){
+//			setTimeout(function(){
+//				CZUser.CZUser.findOne({
+//					where : {
+//						ucode : item
+//					}
+//				}).then(function(userFindOne){
+//					if(!userFindOne){
+//						var uri = configMap['zhihu_people_about_url'] + '';
+//						uri = uri.replace('@id',item);
+//						userController.peopleInfo(uri);
+//						CZList.del(function(){
+//							logger.info('删除list表用户id成功');
+//						},{
+//							where : { uid : item }
+//						});
+//						callback(null);
+//					}else{
+//						logger.warn('根据peopleArray数组里面的数据,查询c_z_user是否存在该用户,用户已存在:' + userFindOne.id);
+//						callback(null);
+//					}
+//				}).catch(function(err){
+//					logger.error('根据peopleArray数组里面的数据,查询c_z_user是否存在该用户,查询出错:' + err);
+//				});
+//			},configMap['zhihu_get_time'] + 0);
+//		},function(err){
+//			logger.error('oops,出错了!!!'+err);
+//			main();
+//		});
+//	});
+//}
+//
+//function index(quizId){
+//	var configMap = _systemConfig.configMap;
+//	var uri = configMap['zhihu_quiz_url'] + '';
+//	uri = uri.replace('@id',quizId);
+//	logger.info('爬取的url:'+uri);
+//	superagent.get(uri).set(cookies).end(function(err,result){
+//		if(err) logger.error(err);
+//		var $ = cheerio.load(result.text);
+//		//保存问题标签到c_z_quie_tags表中
+//		$('.zm-tag-editor.zg-section>div>a').each(function(item){
+//			var map = {};
+//			map.quizId = quizId;
+//			map.name = $(this).text();
+//			map.fid = $(this).attr('href').substring(7);
+//			map.href = $(this).attr('href');
+//			CZQuizTags.save(function(){
+//				logger.info('保存quiz_tags')
+//			},map);
+//		});
+//		var map = {};
+//		map.uid = quizId;
+//		map.href = uri;
+//		var title = $('#zh-question-title > h2').text();
+//		map.name = title.substring(0,title.length-2);
+//		map.cid = $('#zh-single-question-page  div.zu-main-content > div > meta[itemprop=visitsCount]').attr('content');
+//		map.detail = entities.decode($('#zh-question-detail > div').html());
+//		map.rid = $('#zh-question-detail').attr('data-resourceid');
+//	  var comment = $('#zh-question-meta-wrap > div.zm-meta-panel > a.toggle-comment.meta-item').text().replace(/[^0-9]+/ig,"");
+//		if(comment){
+//			map.comment = comment;
+//		}else{
+//			map.comment = '0';
+//		}
+//		var answer = $('#zh-question-answer-num').attr('data-num');
+//		if(answer){
+//			map.answer = answer;
+//		}else{
+//			map.answer = '0';
+//		}
+//		map.follow = $('#zh-question-side-header-wrap > div.zh-question-followers-sidebar > div.zg-gray-normal > a > strong').text();
+//		CZQuiz.save(function(result){
+//			try{
+//				logger.info('保存问题表成功:'+result.id);
+//			}catch(e){
+//				logger.error('保存出错,问题表');
+//			}
+//		},map);
+//		$('#zh-question-answer-wrap > div').each(function(item){
+//			var answerMap = {};
+//			answerMap.quizId = quizId;
+//			answerMap.aid = $(this).attr('data-aid');
+//			answerMap.href = $(this).children('link[itemprop=url]').attr('href');
+//			answerMap.tokenUrl = $(this).children('a.zg-anchor-hidden').attr('name');
+//			answerMap.token = $(this).attr('data-atoken');
+//			answerMap.name = $(this).children('div.zm-item-rich-text.expandable.js-collapse-body').attr('data-author-name');
+//			var ucode = $(this).children('div.answer-head').children('div.zm-item-answer-author-info').children('a.zm-item-link-avatar.avatar-link').attr('data-tip')+'';
+//			if(ucode&&ucode!='undefined'){
+//				answerMap.ucode = (ucode).substring(4);
+//			}
+//			answerMap.create = $(this).attr('data-created');
+//			answerMap.detail = entities.decode($(this).children('div.zm-item-rich-text.expandable.js-collapse-body').children('div.zm-editable-content.clearfix').html());
+//			answerMap.agree = $(this).children('button.up').children('span.count').text();
+//			var comment = $(this).children('a.meta-item.toggle-comment.js-toggleCommentBox').text().replace(/[^0-9]+/ig,"");
+//			if(comment){
+//				answerMap.comment = comment;
+//			}else{
+//				answerMap.comment = 0;
+//			}
+//			answerMap.create = $(this).attr('data-created');
+//			answerMap.update = $(this).children('a.answer-date-link.meta-item').text();
+//			CZAnswer.save(function(){
+//				logger.info('保存回答表成功');
+//			},answerMap);
+//			var userMap = {user:'用户',code:'zhihu_people_about_url'};
+//			if(answerMap.ucode){
+//				userMap.uid = answerMap.ucode;
+//				CZList.save(function(){
+//					logger.info('保存回答问题的人id到list表一次:');
+//				},userMap);
+//			}
+//			//console.log('循环一次');
+//		});
+//
+//	});
+//}
 
-function index(quizId){
-	var configMap = _systemConfig.configMap;
-	var uri = configMap['zhihu_quiz_url'] + '';
-	uri = uri.replace('@id',quizId);
-	logger.info('爬取的url:'+uri);
-	superagent.get(uri).set(cookies).end(function(err,result){
-		if(err) logger.error(err);
-		var $ = cheerio.load(result.text);
-		//保存问题标签到c_z_quie_tags表中
-		$('.zm-tag-editor.zg-section>div>a').each(function(item){
-			var map = {};
-			map.quizId = quizId;
-			map.name = $(this).text();
-			map.fid = $(this).attr('href').substring(7);
-			map.href = $(this).attr('href');
-			CZQuizTags.save(function(){
-				logger.info('保存quiz_tags')
-			},map);
-		});
-		var map = {};
-		map.uid = quizId;
-		map.href = uri;
-		var title = $('#zh-question-title > h2').text();
-		map.name = title.substring(0,title.length-2);
-		map.cid = $('#zh-single-question-page  div.zu-main-content > div > meta[itemprop=visitsCount]').attr('content');
-		map.detail = entities.decode($('#zh-question-detail > div').html());
-		map.rid = $('#zh-question-detail').attr('data-resourceid');
-	  var comment = $('#zh-question-meta-wrap > div.zm-meta-panel > a.toggle-comment.meta-item').text().replace(/[^0-9]+/ig,"");
-		if(comment){
-			map.comment = comment;
-		}else{
-			map.comment = '0';
-		}
-		var answer = $('#zh-question-answer-num').attr('data-num');
-		if(answer){
-			map.answer = answer;
-		}else{
-			map.answer = '0';
-		}
-		map.follow = $('#zh-question-side-header-wrap > div.zh-question-followers-sidebar > div.zg-gray-normal > a > strong').text();
-		CZQuiz.save(function(result){
-			try{
-				logger.info('保存问题表成功:'+result.id);
-			}catch(e){
-				logger.error('保存出错,问题表');
-			}
-		},map);
-		$('#zh-question-answer-wrap > div').each(function(item){
-			var answerMap = {};
-			answerMap.quizId = quizId;
-			answerMap.aid = $(this).attr('data-aid');
-			answerMap.href = $(this).children('link[itemprop=url]').attr('href');
-			answerMap.tokenUrl = $(this).children('a.zg-anchor-hidden').attr('name');
-			answerMap.token = $(this).attr('data-atoken');
-			answerMap.name = $(this).children('div.zm-item-rich-text.expandable.js-collapse-body').attr('data-author-name');
-			var ucode = $(this).children('div.answer-head').children('div.zm-item-answer-author-info').children('a.zm-item-link-avatar.avatar-link').attr('data-tip')+'';
-			if(ucode&&ucode!='undefined'){
-				answerMap.ucode = (ucode).substring(4);
-			}
-			answerMap.create = $(this).attr('data-created');
-			answerMap.detail = entities.decode($(this).children('div.zm-item-rich-text.expandable.js-collapse-body').children('div.zm-editable-content.clearfix').html());
-			answerMap.agree = $(this).children('button.up').children('span.count').text();
-			var comment = $(this).children('a.meta-item.toggle-comment.js-toggleCommentBox').text().replace(/[^0-9]+/ig,"");
-			if(comment){
-				answerMap.comment = comment;
-			}else{
-				answerMap.comment = 0;
-			}
-			answerMap.create = $(this).attr('data-created');
-			answerMap.update = $(this).children('a.answer-date-link.meta-item').text();
-			CZAnswer.save(function(){
-				logger.info('保存回答表成功');
-			},answerMap);
-			var userMap = {user:'用户',code:'zhihu_people_about_url'};
-			if(answerMap.ucode){
-				userMap.uid = answerMap.ucode;
-				CZList.save(function(){
-					logger.info('保存回答问题的人id到list表一次:');
-				},userMap);
-			}
-			//console.log('循环一次');
-		});
-
-	});
-}
-
-function openQuizUrl(quizId){
+/**
+ * 请求链接,获取返回后的html
+ * @param callback
+ * @param quizId
+ */
+function openQuizUrl(callback,quizId){
 	var configMap = _systemConfig.configMap;
 	var uri = configMap[quizCode] + '';
 	uri = uri.replace('@id',quizId);
+	logger.error('进来了?进来了>');
 	superagent.get(uri).set(cookies).end(function(err,result){
 		var stateus = result.status+'';
 		if(err){
@@ -241,7 +261,7 @@ function openQuizUrl(quizId){
 			//防止发生意外,截取数据出错导致服务停止,try-catch处理
 			try{
 				var $ = cheerio.load(result.text);
-				//保存问题标签到c_z_quie_tags表中
+				//先删除该问题已保存的标签,再抓取问题标签保存到c_z_quie_tags表中
 				$('.zm-tag-editor.zg-section>div>a').each(function(item){
 					CZQuizTags.delByQuiz(
 						(function(_this){     //在回调函数中无法访问到外部的值,建立闭包传值
@@ -286,7 +306,13 @@ function openQuizUrl(quizId){
 				$('#zh-question-answer-wrap > div').each(function(item){
 					analyzeAnswerHtml($(this),quizId);
 				});
-
+				var params = {
+					"url_token": quizId,
+					"pagesize": 10,
+					"offset": $('#zh-question-answer-wrap > div').length
+				};
+				console.log('post集合map:' + params.toString());
+				ajaxAnswer(callback,params);
 			}catch(e){
 				logger.error('superagent请求成功,返回html截取保存try-catch出错:' + e);
 				logger.error('地址uri:' + uri + ' 返回状态码:' + result.status);
@@ -302,7 +328,51 @@ function openQuizUrl(quizId){
 	});
 }
 
-function ajaxAnswer(){
+/**
+ * 使用post方式请求知乎服务器获取下一条数据
+ * @param callback
+ * @param map
+ */
+function ajaxAnswer(callback,map){
+	var configMap = _systemConfig.configMap;
+	superagent.post(configMap['zhihu_answer_next_url'])
+		.set(cookies)
+		.send(qs.stringify({method:'next',params:JSON.stringify(map),_xsrf:configMap['_xsrf']}))
+		.end(function(err,result){
+			var status = result.status + '';
+			if(err){
+				logger.error('获取回答下一页内容报错:'+err);
+				logger.error('返回状态码status:' + status + 'map内容:'+map.toString());
+				return false;
+			}
+			if(status.indexOf('4') === 0||status.indexOf('5') === 0){
+				logger.error('获取回答下一页内容map:' + map.toString() + ' 返回状态码:' + result.status);
+				logger.error('result.body.message:' + result.body.message);
+			}else {
+				try{
+					var jsonObj = JSON.parse(result.text);
+					if(jsonObj.msg!=null && jsonObj.msg != ''){
+						var array = jsonObj.msg;
+						for(var j=0;j<array.length;j++) {
+							var $ = cheerio.load(array[j]);
+							var $this = $('div.zm-item-answer');
+							analyzeAnswerHtml($this,map.url_token);
+						}
+						map.offset=map.offset+10;
+						ajaxAnswer(callback,map);
+					}else{
+						//该问题下一页访问完毕
+						callback(null);
+						logger.info('该问题爬取结束,内容map:' + map.toString());
+						return false;
+					}
+				}catch(e){
+					//try-catch出错
+					console.log('try-catch爬取问题出错了');
+					callback(null);
+				}
+			}
+		});
 
 }
 
@@ -345,7 +415,8 @@ function analyzeAnswerHtml($this,quizId){
 	},answerMap);
 }
 
-controller.index = index;
+//controller.index = index;
+controller.crawlerQuiz = crawlerQuiz;
 controller.main = main;
 controller.openQuizUrl = openQuizUrl;
 module.exports = controller;

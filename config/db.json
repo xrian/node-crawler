@@ -4,6 +4,7 @@
   "database":"node-crawler",
   "options":{
     "dialect":"mysql",
-    "host":"127.0.0.1"
+    "host":"127.0.0.1",
+    "timezone":"+08:00"
   }
 }

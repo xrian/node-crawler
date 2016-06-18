@@ -21,6 +21,7 @@ servlet.save = function(callback,map){
 		}
 	});
 };
+
 //destroy
 servlet.delByQuiz = function(callback,quiz){
 	CZQuizTags.destroy({

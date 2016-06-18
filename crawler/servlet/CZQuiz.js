@@ -21,4 +21,22 @@ servlet.save = function(callback,map){
 	});
 };
 
+//根据id查询创建时间
+servlet.query = function(callback,map){
+	CZQuiz.findAll({
+		where : map
+	}).then(function(result){
+		callback(result);
+	});
+}
+
+//根据id查询创建时间
+servlet.delByCode = function(callback,map){
+	CZQuiz.destroy({
+		where : map
+	}).then(function(result){
+		//callback(map.uid);
+	});
+}
+
 module.exports = servlet;

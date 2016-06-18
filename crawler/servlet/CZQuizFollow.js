@@ -21,4 +21,17 @@ servlet.save = function(callback,map){
 	});
 };
 
+/**
+ * 根据问题id和用户code查询是否存在该记录
+ * @param callback
+ * @param map
+ */
+servlet.queryByUid = function(callback,map,back){
+	CZQuizFollow.findOne({
+		where : map
+	}).then(function(result){
+		callback(result,back);
+	});
+};
+
 module.exports = servlet;
