@@ -24,6 +24,25 @@ var CZError = require('../servlet/CZError.js');
 var _systemConfig = require('../../common/servlet/_systemConfig.js').servlet;
 
 
+//传入问题id,查询出该问题的关注用户,保存到数据库,如果查询到在数据库已有记录,则停止获取
+function quizFollowUser(callback,quizId){
+	var map = {
+		start:0,
+		offset:0
+	};
+	var configMap = _systemConfig.configMap;
+	var uri = configMap[quizFollowersCode] + '';
+	uri = uri.replace('@id', quizId);
+	map._xsrf = configMap['_xsrf'];
+	quizFollowNext(map,quizId);
+	callback(null);
+}
+
+/**
+ * 传入相应的参数,循环获取该问题关注的用户.如果查询到已存在的记录,则结束循环
+ * @param map 查询下一页问题关注用户列表所需要的参数
+ * @param quizId 问题id
+ */
 function quizFollowNext(map,quizId){
 	var peopleArray = new Array();
 	var configMap = _systemConfig.configMap;
@@ -34,7 +53,7 @@ function quizFollowNext(map,quizId){
 		.set(cookies)
 		.send(qs.stringify(map))
 		.end(function(err,result){
-			console.log('集合数据是什么'+JSON.stringify(map));
+			logger.info('请求知乎一次:' + uri );
 			var status = result.status + '';
 			if(err){
 				logger.error('获取回答下一页内容报错:'+err);
@@ -54,7 +73,7 @@ function quizFollowNext(map,quizId){
 						var $ = cheerio.load(array[1]);
 						$('.zm-profile-card.zm-profile-section-item').each(function(item, element){
 							var map = {_this : $(this),quizId : quizId};
-							peopleArray.push(map)
+							peopleArray.push(map);
 						});
 						async.eachLimit(peopleArray, 3, function(item,callback){
 							saveFollow(callback,item);
@@ -80,19 +99,26 @@ function quizFollowNext(map,quizId){
 		});
 }
 
+/**
+ * 传入回调函数callback和map{_this : $(this),quizId : quizId}
+ * 保存成功后执行回调函数callback(null)
+ * 如果可以获取到code,则保存用户code和name到数据库
+ * 如果获取不到code,则说明用户是匿名关注,忽略,执行回调函数callback(null)
+ * @param callback async的回调函数
+ * @param map 参数集合
+ */
 function saveFollow(callback,map){
 	var name = map._this.children('.zm-list-content-medium').children('h2').children('a').text();
 	var code = map._this.children('.zm-list-content-medium').children('h2').children('a').attr('data-tip');
 	if(code){
 		code = (code+'').substring(4);
 		CZQuizFollow.queryByUid(function(result,callback){
-			console.log('这里是什么类型?'+typeof callback);
 			if(!result){
 				CZQuizFollow.save(function(result){
-					CZList.save(function(){},{
-						uid : result.uid,
-						code : 'zhihu_people_about_url'
-					});
+					// CZList.save(function(){},{
+					// 	uid : result.uid,
+					// 	code : 'zhihu_people_about_url'
+					// });
 				},{
 					quizId : map.quizId,
 					name : name,
@@ -110,6 +136,6 @@ function saveFollow(callback,map){
 		callback(null);
 	}
 }
-
+controller.quizFollowUser = quizFollowUser;
 controller.quizFollowNext = quizFollowNext;
 module.exports = controller;

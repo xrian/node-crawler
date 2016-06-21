@@ -16,7 +16,6 @@ servlet.CZList = CZList;
  */
 servlet.save = function(callback,map){
 	CZList.build(map).save().then(function(result){
-		logger.info('保存CZList表成功:'+result.id);
 		callback(result);
 	});
 };

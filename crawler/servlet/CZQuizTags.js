@@ -22,6 +22,20 @@ servlet.save = function(callback,map){
 	});
 };
 
+/**
+ * 传入参数,解析html后保存
+ * @param _this jquery获取each循环后$(this)的值
+ * @param quizId 问题id
+ */
+servlet.saveByHtml = function(_this,quizId){
+		var map = {};
+		map.quizId = quizId;
+		map.name = _this.text();
+		map.fid = _this.attr('href').substring(7);
+		map.href = _this.attr('href');
+	  servlet.save(function(){},map);
+};
+
 //destroy
 servlet.delByQuiz = function(callback,quiz){
 	CZQuizTags.destroy({

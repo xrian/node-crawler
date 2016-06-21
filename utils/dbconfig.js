@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 
 var fs = require('fs');
 var path = require('path');
@@ -11,4 +11,3 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 module.exports = db;
-

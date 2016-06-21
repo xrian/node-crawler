@@ -16,7 +16,6 @@ servlet.CZUser = CZUser;
  */
 servlet.save = function(callback,map){
 	CZUser.build(map).save().then(function(result){
-		logger.info('保存CZUser用户表成功');
 		callback(result);
 	});
 };

@@ -16,7 +16,6 @@ servlet.CWebsite = CWebsite;
  */
 servlet.save = function(callback,map){
 	CWebsite.build(map).save().then(function(result){
-		console.log('保存CWebsite表成功');
 		callback(result);
 	});
 };

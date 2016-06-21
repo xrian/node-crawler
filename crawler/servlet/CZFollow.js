@@ -16,7 +16,6 @@ servlet.CZFollow = CZFollow;
  */
 servlet.save = function(callback,map){
 	CZFollow.build(map).save().then(function(result){
-		console.log('保存CZAnswer表成功');
 		callback(result);
 	});
 };

@@ -16,7 +16,6 @@ servlet.CZError = CZError;
  */
 servlet.save = function(callback,map){
 	CZError.build(map).save().then(function(result){
-		logger.info('保存CZError表成功:'+result.id);
 		callback(result);
 	});
 };

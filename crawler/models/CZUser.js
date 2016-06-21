@@ -176,12 +176,6 @@ module.exports = function(sequelize,Sequelize){
 				'allowNull': true,
 				'comment' : '备注'
 			},
-			'app_id' : {
-				'type' : Sequelize.STRING(500),
-				'allowNull': true,
-				'defaultValue' : 1,
-				'comment' : '应用id'
-			},
 			'party_id' : {
 				'type' : Sequelize.STRING(500),
 				'allowNull': true,

@@ -14,10 +14,10 @@ var logger = log4js.getLogger(__dirname);
 
 
 //配合express用的方法
-exports.use = function(app) {
+module.exports.use = function(app) {
 	//页面请求日志, level用auto时,默认级别是WARN
 	app.use(log4js.connectLogger(logger, {level:'ALL', format:':method :url'}));
-}
+};
 
-exports.logger = logger;
-exports.log4js = log4js;
+module.exports.logger = logger;
+module.exports.log4js = log4js;

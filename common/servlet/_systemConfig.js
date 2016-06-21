@@ -33,7 +33,7 @@ function setConfigMap(){
 	}).catch(function(err){
 		console.log('查询_system_config出错:'+err);
 	});
-};
+}
 setConfigMap();
 
 /**
@@ -57,6 +57,6 @@ servlet.getConfigMap = function(callback){
 	}else{
 		callback(configMap);
 	}
-}
+};
 
 module.exports.servlet = servlet;

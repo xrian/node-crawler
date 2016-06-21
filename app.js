@@ -12,7 +12,7 @@ var app = express();
 //log4js的模块化还有点问题,先这样用着吧,能正常使用就行,有时候再研究如何封装
 var log = require('./utils/log4js.js');
 log.use(app);
-var logger=log.log4js.getLogger(__filename);;
+var logger=log.log4js.getLogger(__filename);
 
 var zhihu = require('./routes/zhihu.js');
 

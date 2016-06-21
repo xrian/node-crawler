@@ -16,7 +16,6 @@ servlet.CZQuizFollow = CZQuizFollow;
  */
 servlet.save = function(callback,map){
 	CZQuizFollow.build(map).save().then(function(result){
-		console.log('保存CZQuizTags表成功');
 		callback(result);
 	});
 };

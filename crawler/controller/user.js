@@ -177,28 +177,7 @@ function regexStr(str,rule){
 	}
 }
 
-//测试方法,不用理
-function sconfigMap(){
-	CZUser.CZUser.findOne({
-		where : {
-			ucode : 'aaacha-er-si-hai-han'
-		}
-	}).then(function(userFindOne){
-		if(!userFindOne){
-			console.log('阿萨德撒就当减肥has京东方');
-		}
-		if(userFindOne=='null'){
-			console.log('1321654654123156341');
-		}
-		if(userFindOne==null){
-			console.log('asdasdasdsadsa');
-		}
-		console.dir(userFindOne);
-		console.log(userFindOne);
-	});
-}
 
-module.exports.configMap = sconfigMap;
 
 module.exports.peopleInfo = peopleInfo;
 module.exports.getPeopleInfo = getPeopleInfo;
