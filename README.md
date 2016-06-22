@@ -20,21 +20,21 @@ UPDATE `node-crawler`.`_system_config` SET `val`='_xsrf' WHERE `id`='1466042978'
 
 文件目录说明
 -
-bin
->www     启动文件
-common   公共目录
->models
->>_systemConfig.js    _system_config表的实体
->servlet
->>_systemConfig.js    一些常用操作_system_config表的方法
-config      配置文件
-crawler     爬虫代码
->controller     主要逻辑代码目录
->models         实体
->servlet        模型
-logs        日志文件
-node_modules    插件列表
-public    静态资源
-routes    路由
-utils     工具类
-views     试图文件
+bin<br>
+>www     启动文件<br>
+common   公共目录<br>
+>models<br>
+>>_systemConfig.js    _system_config表的实体<br>
+>servlet<br>
+>>_systemConfig.js    一些常用操作_system_config表的方法<br>
+config      配置文件<br>
+crawler     爬虫代码<br>
+>controller     主要逻辑代码目录<br>
+>models         实体<br>
+>servlet        模型<br>
+logs        日志文件<br>
+node_modules    插件列表<br>
+public    静态资源<br>
+routes    路由<br>
+utils     工具类<br>
+views     视图文件<br>
