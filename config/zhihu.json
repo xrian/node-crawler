@@ -4,7 +4,7 @@
   "Accept-Language":"zh-CN,zh;q=0.8,en;q=0.6",
   "Cache-Control":"max-age=0",
   "Connection":"keep-alive",
-  "Cookie": "d_c0=\"AFCAG-NbCgqPTvd3ORaPzoco8gCClKg4l8s=|1465273868\"; _za=4803f0ac-792f-49ee-af98-8f6357020bab; _zap=c01fe2e2-1156-4346-98a5-40fc91749a29; _xsrf=82b8a9c627d535791eeca538bf498227; login=\"N2JiZmZlNmRjYWE5NDI3M2E5YTUzNDk1ZDRiMzBiMmU=|1465356095|0d6c9125c1088d0c3e10b693f7f03b5e79da55cf\"; a_t=\"2.0AJAAQP9sCgoXAAAAPxx_VwCQAED_bAoKAFCAG-NbCgoXAAAAYQJVTT8cf1cA367F9ULkhZAcnndXqGjfBDM7trVjx7GIbt_2h-3rICtV1LeqIoAwQw==\"; z_c0=Mi4wQUpBQVFQOXNDZ29BVUlBYjQxc0tDaGNBQUFCaEFsVk5QeHhfVndEZnJzWDFRdVNGa0J5ZWQxZW9hTjhFTXp1MnRR|1465356095|d6a3e86cdd0a91d7503b590d02168387ac85c6e9; q_c1=9c0c1fb6d29a4f9bbb322d0141131270|1465739740000|1465739740000; l_cap_id=\"NTcyMzgwYmM3NTM3NGUzZThjYTBhMWM3ODkwZDkzNzk=|1465739740|21d421353ca00323f05261c144321e5ee0bae4f2\"; cap_id=\"ZDEwODQ1MjNjM2UwNDEyNGI0YmY0MDE1YTBkYjRiMjc=|1465739740|2edbbc90e0cca9223c34b95d9b847ab2bc147e5f\"; __utma=51854390.90059314.1465914467.1465914467.1465914467.1; __utmb=51854390.6.10.1465914467; __utmc=51854390; __utmz=51854390.1465914467.1.1.utmcsr=zhihu.com|utmccn=(referral)|utmcmd=referral|utmcct=/; __utmv=51854390.100--|2=registration_date=20160607=1^3=entry_date=20160607=1",
+  "Cookie": "",
   "Host":"www.zhihu.com",
   "Upgrade-Insecure-Requests":"1",
   "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"

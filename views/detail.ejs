@@ -21,8 +21,8 @@
 	      </p>
 		    <div>回答用户:<a href="https://www.zhihu.com/people/<%= result[i].ucode %>"><%= result[i].name %></a>
 		      <span>赞同数:<%= result[i].agree %></span>
-		    </div>
-        <p>内容:<%=result[i].detail %></p>
+		    </div><!--知乎对图片进行了防盗链处理,所以会显示很多空白-->
+        <p>内容:<%- result[i].detail %></p>
 	    </li>
 	    <% } %>
     </ul>
