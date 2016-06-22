@@ -86,3 +86,21 @@ user.js实现的是根据用户唯一code(该code用户可以修改一次,并不
 <br>
 如果想改进,可以先获取子标签,再获取该标签下的问题列表,爬取问题信息,获取到回答问题和关注问题的用户,然后再获取用户详细信息.
 也就是加几个逻辑就行.我发现我如果这样做,如果爬取频率太高可能会被封ip,如果频率低,那爬数据效率又慢.所以就放弃了
+
+```
+知乎的robots协议,发现个人中心详情页不允许爬😰
+User-agent: *
+Crawl-delay: 10
+
+Disallow: /login
+Disallow: /logout
+Disallow: /resetpassword
+Disallow: /terms
+Disallow: /search
+Disallow: /notifications
+Disallow: /settings
+Disallow: /inbox
+Disallow: /admin_inbox
+Disallow: /*?guide*
+Disallow: /people/*-*-*-*
+```
