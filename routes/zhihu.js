@@ -6,69 +6,31 @@ var express = require('express');
 var router = express.Router();
 var peopleController = require('../crawler/controller/user.js');
 var quizController = require('../crawler/controller/quiz.js');
-
+var mainController = require('../crawler/controller/main.js');
 var followController = require('../crawler/controller/follow.js');
 
-router.all('/',function(req,res,next){
+router.all('/chance',function(req,res,next){
 	console.log('进来了蛮');
-	quizController.oneQuiz(47654721);
-	res.send('好艰难,别报错啊');
+	var q = req.query.q;
+	var num = parseInt(q);
+	if(typeof num === "number"){
+		quizController.oneQuiz(q);
+		res.send('正在爬取,请稍等几分钟');
+	}else{
+		res.send('请在浏览器输入正确的参数.?q=问题id ');
+	}
 });
-//
-// router.all('/index',function(req,res,next){
-// 	zhihuController.index(req,res,next);
-// });
-//
-// router.all('/type',function(req,res,next){
-// 	zhihuController.type(req,res,next);
-// });
-//
-// router.all('/tags',function(req,res,next){
-// 	zhihuController.tags(req,res,next);
-// });
-//
-// router.all('/test',function(req,res,next){
-// 	peopleController.peopleInfo('Barachan',function(){
-// 		console.log('最后一行代码');
-// 	});
-// 	res.send('好艰难,别报错啊');
-// });
-//
-// router.all('/people',function(req,res,next){
-// //调用peopleController.peopleInfo()方法,传入知乎个人详细信息url即可爬取信息到数据库
-// //	peopleController.peopleInfo('https://www.zhihu.com/people/he-shi-jun/about');
-// 	peopleController.peopleInfo('http://localhost:3000');
-// 	res.send('111111111111111');
-// });
-// //
-// router.all('/testRE',function(req,res,next){
-// 	peopleController.getPeopleInfo();
-// 	res.send('2222222222');
-// });
-//
-// router.all('/config',function(req,res,next){
-// 	peopleController.configMap();
-// 	res.send('2222222222');
-// });
-//
-// router.all('/quiz',function(req,res,next){
-// //	quizController.index('28387118');
-// 	quizController.crawlerQuiz();
-// 	res.send('2222222222');
-// });
-//
-// router.all('/main',function(req,res,next){
-// 	quizController.main(req,res,next);
-// 	res.send('33333333333');
-// });
-//
-// router.all('/follow',function(req,res,next){
-// 	var map = {
-// 		start:0,
-// 		offset:0
-// 	};
-// 	followController.quizFollowNext(map,'41220946');
-// 	res.send('33333333333');
-// });
+
+router.get('/list',function (req, res, next) {
+	mainController.queryAllQuiz(req, res, next);
+});
+
+router.get('/by',function (req, res, next) {
+	mainController.queryAllAnswer(req, res, next);
+});
+
+router.get('/followList',function (req, res, next) {
+	mainController.queryAllFollow(req, res, next);
+});
 
 module.exports = router;

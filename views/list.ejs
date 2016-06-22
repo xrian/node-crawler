@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	  <style>
+		  .wrap{
+			  width: 100%;
+		  }
+		  .wrap > div{
+			  float: left;
+			  width: 50%;
+		  }
+	  </style>
+  </head>
+  <body>
+    <ul>
+	    <% for(var i = 0; i < result.length; i++ ){ %>
+	    <li>
+	      <p>标题:
+		      <a href="/zhihu/by?q=<%= result[i].uid %>">
+		        <%=result[i].name %>
+	        </a>
+	      </p>
+		    <div class="wrap">
+			    <div><a href="https://www.zhihu.com/question/<%= result[i].uid %>">原文链接</a></div>
+			    <div><a href="/zhihu/followList?q=<%= result[i].uid %>">抓取到的该问题关注用户列表</a></div>
+		    </div>
+        <p>内容:<%=result[i].detail %></p>
+	    </li>
+	    <% } %>
+    </ul>
+  </body>
+</html>

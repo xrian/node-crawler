@@ -78,12 +78,12 @@ module.exports = function(sequelize,Sequelize){
 			'create' : {
 				'type' : Sequelize.STRING(32),
 				'allowNull': true,
-				'comment' : '评论数'
+				'comment' : '初始回答时间'
 			},
 			'update' : {
 				'type' : Sequelize.STRING(32),
 				'allowNull': true,
-				'comment' : '评论数'
+				'comment' : '最后修改时间'
 			},
 			'remark' : {
 				'type' : Sequelize.STRING(500),

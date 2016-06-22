@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= quiz.name %>></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>
+	    <%= quiz.name %>
+    </h1>
+    <p><%= quiz.detail %></p>
+    <hr/>
+    <h3>回答列表,本数据最后更新时间:<%= date %></h3>
+    <ul>
+	    <% for(var i = 0; i < result.length; i++ ){ %>
+	    <li>
+	      <p>
+		      <a href="https://www.zhihu.com<%= result[i].href %>">
+			      原文链接
+	        </a>
+	      </p>
+		    <div>回答用户:<a href="https://www.zhihu.com/people/<%= result[i].ucode %>"><%= result[i].name %></a>
+		      <span>赞同数:<%= result[i].agree %></span>
+		    </div>
+        <p>内容:<%=result[i].detail %></p>
+	    </li>
+	    <% } %>
+    </ul>
+  </body>
+</html>

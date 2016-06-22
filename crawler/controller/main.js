@@ -10,193 +10,84 @@ var qs = require('querystring');
 var logger = require('../../utils/log4js.js').log4js.getLogger(__filename);
 var cookies = require('../../utils/zhihu.js');
 var Entities = require('html-entities').AllHtmlEntities;
-var entities = new Entities();    //½â¾öÖĞÎÄÂÒÂëµÄ¶ÔÏó
+var entities = new Entities();    
 var controller={};
 
 var CZUser = require('../servlet/CZUser.js');
+var CZQuizFollow = require('../servlet/CZQuizFollow.js');
 var CZQuiz = require('../servlet/CZQuiz.js');
 var CZQuizTags = require('../servlet/CZQuizTags.js');
 var CZAnswer = require('../servlet/CZAnswer.js');
 var CZList = require('../servlet/CZList.js');
 var _systemConfig = require('../../common/servlet/_systemConfig.js').servlet;
-var userController = require('./user.js');
 
-var quizArray = new Array();
-var peopleArray = new Array();
 
-/**
- * Ö÷º¯Êı
- * @param req
- * @param res
- * @param next
- */
-function main(req,res,next){
-	var configMap = _systemConfig.configMap;
-	//²éÑ¯CZList±íÈ«²¿Î´É¾³ıµÄÎÊÌâid,·ÅÈëÊı×éÖĞ
-	CZList.CZList.findAll({
-		where :{
-			code : 'zhihu_quiz_url'
-		}
-	}).then(function(result){
-		for(var i = 0;i<result.length;i++){
-			quizArray.push(result[i].uid);
-		}
-		logger.info('ÎÊÌâid:'+quizArray);
-		//Ñ­»·Êı×é,Ö´ĞĞÍ¬Ò»º¯Êı
-		async.eachSeries(quizArray,function(item,callback){
-			setTimeout(function(){
-				index(item);
-				CZList.del(function(){
-					logger.info('É¾³ılist±íÎÊÌâid³É¹¦');
-				},{
-					where : { uid : item }
-				});
-				callback(null);
-			},configMap['zhihu_get_time'] + 0);
-		},function(err){
-			logger.info('oops,³ö´íÁË!!!'+err);
-			getPeopleInfo();
-		});
+//æŸ¥è¯¢å‡ºå…¨éƒ¨æœªåˆ é™¤çš„é—®é¢˜
+function queryAllQuiz(req, res, next) {
+	CZQuiz.CZQuiz.findAll().then(function (result) {
+		res.render('list', { result: result });
 	});
 }
+controller.queryAllQuiz = queryAllQuiz;
 
-/**
- * »Øµ÷½ğ×ÖËşµÄÍşÁ¦( £à§Õ¡ä)
- */
-function getPeopleInfo(){
+//æ ¹æ®é—®é¢˜æŸ¥è¯¢å‡ºè¯¥é—®é¢˜ä»¥åŠè¯¥é—®é¢˜çš„ç­”æ¡ˆ
+function queryAllAnswer(req, res, next) {
 	var configMap = _systemConfig.configMap;
-	CZList.CZList.findAll({
-		where :{
-			code : 'zhihu_people_about_url'
-		}
-	}).then(function(peopleList){
-		for(var i = 0;i<peopleList.length;i++){
-			peopleArray.push(peopleList[i].uid);
-		}
-		logger.info('¸öÈËÖĞĞÄid:'+peopleArray);
-		async.eachSeries(peopleArray,function(item,callback){
-			setTimeout(function(){
-				CZUser.CZUser.findOne({
-					where : {
-						ucode : item
-					}
-				}).then(function(userFindOne){
-					if(!userFindOne){
-						var uri = configMap['zhihu_people_about_url'] + '';
-						uri = uri.replace('@id',item);
-						userController.peopleInfo(uri);
-						CZList.del(function(){
-							logger.info('É¾³ılist±íÓÃ»§id³É¹¦');
-						},{
-							where : { uid : item }
-						});
-						callback(null);
-					}else{
-						logger.warn('¸ù¾İpeopleArrayÊı×éÀïÃæµÄÊı¾İ,²éÑ¯c_z_userÊÇ·ñ´æÔÚ¸ÃÓÃ»§,ÓÃ»§ÒÑ´æÔÚ:' + userFindOne.id);
-						callback(null);
-					}
-				}).catch(function(err){
-					logger.error('¸ù¾İpeopleArrayÊı×éÀïÃæµÄÊı¾İ,²éÑ¯c_z_userÊÇ·ñ´æÔÚ¸ÃÓÃ»§,²éÑ¯³ö´í:' + err);
-				});
-			},configMap['zhihu_get_time'] + 0);
-		},function(err){
-			logger.error('oops,³ö´íÁË!!!'+err);
-			main();
-		});
-	});
-}
-
-function index(quizId){
-	var configMap = _systemConfig.configMap;
-	var uri = configMap['zhihu_quiz_url'] + '';
-	uri = uri.replace('@id',quizId);
-	logger.info('ÅÀÈ¡µÄurl:'+uri);
-	superagent.get(uri).set(cookies).end(function(err,result){
-		if(err) logger.error(err);
-		var $ = cheerio.load(result.text);
-		//±£´æÎÊÌâ±êÇ©µ½c_z_quie_tags±íÖĞ
-		$('.zm-tag-editor.zg-section>div>a').each(function(item){
-			var map = {};
-			map.quizId = quizId;
-			map.name = $(this).text();
-			map.fid = $(this).attr('href').substring(7);
-			map.href = $(this).attr('href');
-			CZQuizTags.save(function(){
-				logger.info('±£´æquiz_tags')
-			},map);
-		});
-		var map = {};
-		map.uid = quizId;
-		map.href = uri;
-		var title = $('#zh-question-title > h2').text();
-		map.name = title.substring(0,title.length-2);
-		map.cid = $('#zh-single-question-page  div.zu-main-content > div > meta[itemprop=visitsCount]').attr('content');
-		map.detail = entities.decode($('#zh-question-detail > div').html());
-		map.rid = $('#zh-question-detail').attr('data-resourceid');
-		var comment = $('#zh-question-meta-wrap > div.zm-meta-panel > a.toggle-comment.meta-item').text().replace(/[^0-9]+/ig,"");
-		if(comment){
-			map.comment = comment;
+	var quizId = parseInt(req.query.q);
+	async.series([
+		function(callback){
+			CZQuiz.CZQuiz.findOne({
+				where : {
+					uid : quizId
+				}
+			}).then(function (result) {
+				callback(null,result);
+			});
+		},		//å…ˆåˆ é™¤æ•°æ®åº“ä¸­ä¸è¯¥é—®é¢˜ç›¸å…³çš„æ•°æ®
+		function(callback){ CZAnswer.queryByQuiz(callback,quizId); }
+	],function(err,result){
+		if(err){
+			console.log(err);
+			res.send('oops!æŸ¥è¯¢å‡ºé”™äº†');
 		}else{
-			map.comment = '0';
+			res.render('detail', {quiz : result[0], result: result[1] ,date: result[0].created_at });
 		}
-		var answer = $('#zh-question-answer-num').attr('data-num');
-		if(answer){
-			map.answer = answer;
-		}else{
-			map.answer = '0';
-		}
-		map.follow = $('#zh-question-side-header-wrap > div.zh-question-followers-sidebar > div.zg-gray-normal > a > strong').text();
-		CZQuiz.save(function(result){
-			try{
-				logger.info('±£´æÎÊÌâ±í³É¹¦:'+result.id);
-			}catch(e){
-				logger.error('±£´æ³ö´í,ÎÊÌâ±í');
-			}
-		},map);
-//		console.log('Î´Ö´ĞĞ?');
-//		console.log($('#zh-question-answer-wrap > div').html());
-//		logger.info(result.text);
-		$('#zh-question-answer-wrap > div').each(function(item){
-//			console.log('½øÈëÑ­»·ÁËÂğ');
-			var answerMap = {};
-			answerMap.quizId = quizId;
-			answerMap.aid = $(this).attr('data-aid');
-			answerMap.href = $(this).children('link[itemprop=url]').attr('href');
-			answerMap.tokenUrl = $(this).children('a.zg-anchor-hidden').attr('name');
-			answerMap.token = $(this).attr('data-atoken');
-//			console.log($(this).children('div.zm-item-answer-author-info').text());
-			answerMap.name = $(this).children('div.zm-item-rich-text.expandable.js-collapse-body').attr('data-author-name');
-			var ucode = $(this).children('div.answer-head').children('div.zm-item-answer-author-info').children('a.zm-item-link-avatar.avatar-link').attr('data-tip')+'';
-			if(ucode&&ucode!='undefined'){
-				answerMap.ucode = (ucode).substring(4);
-			}
-			answerMap.create = $(this).attr('data-created');
-			answerMap.detail = entities.decode($(this).children('div.zm-item-rich-text.expandable.js-collapse-body').children('div.zm-editable-content.clearfix').html());
-			answerMap.agree = $(this).children('button.up').children('span.count').text();
-			var comment = $(this).children('a.meta-item.toggle-comment.js-toggleCommentBox').text().replace(/[^0-9]+/ig,"");
-			if(comment){
-				answerMap.comment = comment;
-			}else{
-				answerMap.comment = 0;
-			}
-			answerMap.create = $(this).attr('data-created');
-			answerMap.update = $(this).children('a.answer-date-link.meta-item').text();
-			CZAnswer.save(function(){
-				logger.info('±£´æ»Ø´ğ±í³É¹¦');
-			},answerMap);
-			var userMap = {user:'ÓÃ»§',code:'zhihu_people_about_url'};
-			if(answerMap.ucode){
-				userMap.uid = answerMap.ucode;
-				CZList.save(function(){
-					logger.info('±£´æ»Ø´ğÎÊÌâµÄÈËidµ½list±íÒ»´Î:');
-				},userMap);
-			}
-			//console.log('Ñ­»·Ò»´Î');
-		});
-
 	});
 }
+controller.queryAllAnswer = queryAllAnswer;
 
-controller.index = index;
-controller.main = main;
+//æ ¹æ®é—®é¢˜idæŸ¥è¯¢å…³æ³¨è¯¥ç”¨æˆ·çš„ç”¨æˆ·åˆ—è¡¨
+function queryAllFollow(req, res, next) {
+	var configMap = _systemConfig.configMap;
+	var quizId = parseInt(req.query.q);
+	async.series([
+		function(callback){
+			CZQuiz.CZQuiz.findOne({
+				where : {
+					uid : quizId
+				}
+			}).then(function (result) {
+				callback(null,result);
+			});
+		},		//å…ˆåˆ é™¤æ•°æ®åº“ä¸­ä¸è¯¥é—®é¢˜ç›¸å…³çš„æ•°æ®
+		function(callback){
+			CZQuizFollow.CZQuizFollow.findAll({
+				where : {
+					quizId : quizId
+				}
+			}).then(function (result) {
+				callback(null,result);
+			});
+		}
+	],function(err,result){
+		if(err){
+			console.log(err);
+			res.send('oops!æŸ¥è¯¢å‡ºé”™äº†');
+		}else{
+			res.render('followList', {quiz : result[0], result: result[1] });
+		}
+	});
+}
+controller.queryAllFollow = queryAllFollow;
+
 module.exports = controller;

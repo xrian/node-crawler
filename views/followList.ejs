@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= quiz.name %>></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>
+	    <%= quiz.name %>
+    </h1>
+    <hr/>
+    <h3>关注问题用户列表,本数据最后更新时间:<%= quiz.created_at %></h3>
+    <ul>
+	    <% for(var i = 0; i < result.length; i++ ){ %>
+	    <li>
+        <a href="https://www.zhihu.com/people/<%= result[i].uid %>"><%= result[i].name %></a>
+	    </li>
+	    <% } %>
+    </ul>
+  </body>
+</html>

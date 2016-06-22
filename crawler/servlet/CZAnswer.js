@@ -23,4 +23,17 @@ servlet.save = function(callback,map){
 	});
 };
 
+//根据问题id查询全部回答
+servlet.queryByQuiz = function(callback, quizId){
+	CZAnswer.findAll({
+		where : {
+			quizId : quizId
+		}
+	}).then(function(result){
+		callback(null,result);
+	}).catch(function(err){
+		logger.error('根据问题id查询回答出错:'+err);
+	});
+};
+
 module.exports = servlet;
