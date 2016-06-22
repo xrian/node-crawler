@@ -18,10 +18,10 @@
 * 控制器层是crawler/controller和routes目录下文件<br>
 <br>
 因为使用sequelize作为ORM框架,crawler/models目录存放的是对应数据库表结构,crawler/index.js文件加载进内存<br>
-crawler/servlet中包含了对单个数据表操作的方法(因为之前写java,所以把java里学到的用了过来)<br>
+crawler/servlet中包含了对单个数据表操作的方法<br>
 crawler/controller中是各个功能的具体实现代码,而routes只是做路由跳转功能,可以看到已经实现的方法<br>
-<br>
-刚开始学node的时候,看到sequelize这框架不错,但是资料太少,就像写个爬虫玩玩,熟悉下node以及sequelize,但是写到一半发现这东西实用性不高,所以只实现了爬虫的基础功能,没实现太多逻辑功能.
+-
+刚开始学node的时候,看到sequelize这框架不错,但是资料太少,就想写个爬虫玩玩,熟悉下node以及sequelize,但是写到一半发现这东西实用性不高,所以只实现了爬虫的基础功能,没实现太多逻辑功能.
 只是抓取到数据,保存到数据库,直接将数据库数据显示在页面(似乎是知乎对图片做了防盗链处理,会显示很多空白区域),页面只是几个div循环输出,很丑OTZ
 
 使用方法
@@ -30,22 +30,24 @@ crawler/controller中是各个功能的具体实现代码,而routes只是做路�
 打开[网页😊](https://www.zhihu.com/topic),使用开发者工具network功能,往下翻会自动加载下一页,找到TopicFeedList这个请求,将cookie和请求参数总的_xsrf复制出来<br>
 将cookie填到config/zhihu.json中的cookie中,在数据库执行
 UPDATE `node-crawler`.`_system_config` SET `val`='_xsrf' WHERE `id`='1466042978';(其中_xsrf就是刚刚复制出来的值)<br>
-打开控制台,进入项目文件夹根目录,npm install,完成后node bin/www既可启动
-
+打开控制台,进入项目文件夹根目录<br>npm install<br>完成后<br>node bin/www<br>既可启动<br>
+<br>
+爬取数据  http://localhost:3000/zhihu/chance?q=问题id<br>
+查看爬取后的内容  http://localhost:3000/zhihu/list<br>
 文件目录说明
 -
 bin<br>
->www     启动文件<br>
+	www     启动文件<br>
 common   公共目录<br>
->models<br>
->>_systemConfig.js    _system_config表的实体<br>
->servlet<br>
->>_systemConfig.js    一些常用操作_system_config表的方法<br>
+	models<br>
+		_systemConfig.js    _system_config表的实体<br>
+	servlet<br>
+		_systemConfig.js    一些常用操作_system_config表的方法<br>
 config      配置文件<br>
 crawler     爬虫代码<br>
->controller     主要逻辑代码目录<br>
->models         实体<br>
->servlet        模型<br>
+	controller     主要逻辑代码目录<br>
+	models         实体<br>
+	servlet        模型<br>
 logs        日志文件<br>
 node_modules    插件列表<br>
 public    静态资源<br>
@@ -55,17 +57,17 @@ views     视图文件<br>
 
 表说明
 -
-c_z_answer  保存用户回答
-c_z_error   保存报错信息
-c_z_follow  (没用到)
-c_z_list    (没用到)
-c_z_quiz    保存问题信息
-c_z_quiz_agree  (没用到)
-c_z_quiz_follow  保存关注问题的用户
-c_z_quiz_tags   保存问题的标签
-c_z_tags   保存知乎的标签
-c_z_type   保存主题
-c_z_user   保存知乎的用户（没用到)
+c_z_answer  保存用户回答<br>
+c_z_error   保存报错信息<br>
+c_z_follow  (没用到)<br>
+c_z_list    (没用到)<br>
+c_z_quiz    保存问题信息<br>
+c_z_quiz_agree  (没用到)<br>
+c_z_quiz_follow  保存关注问题的用户<br>
+c_z_quiz_tags   保存问题的标签<br>
+c_z_tags   保存知乎的标签<br>
+c_z_type   保存主题<br>
+c_z_user   保存知乎的用户（没用到)<br>
 
 
 
