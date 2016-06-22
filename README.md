@@ -9,3 +9,11 @@
   5.可以获取知乎的全部主题,并且可以根据主题获取全部的子标签.[这网页的内容](https://www.zhihu.com/topic)<br>
 使用mysql数据库存储数据<br>
 主要使用模块express,ejs,superagent,cheerio,async,log4js,sequelize<br>
+
+使用方法
+-
+在mysql数据库建立node-crawler数据库,字符集为utf8 - utf8_general_ci导入根目录sql文件<br>
+打开https://www.zhihu.com/topic,使用开发者工具network功能,往下翻会自动加载下一页,找到TopicFeedList这个请求,将cookie和请求参数总的_xsrf复制出来<br>
+将cookie填到config/zhihu.json中的cookie中,在数据库执行
+UPDATE `node-crawler`.`_system_config` SET `val`='_xsrf' WHERE `id`='1466042978';(其中_xsrf就是刚刚复制出来的值)<br>
+打开控制台,进入项目文件夹根目录,npm install,完成后node bin/www既可启动
