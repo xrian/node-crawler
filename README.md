@@ -30,7 +30,7 @@ log4js的配置有点问题,无法设置输出日志等级,会将全部日志保
 使用方法
 -
 在mysql数据库建立node-crawler数据库,字符集为utf8 - utf8_general_ci导入根目录sql文件<br>
-打开[网页](https://www.zhihu.com/topic),使用开发者工具network功能,往下翻会自动加载下一页,找到TopicFeedList这个请求,将cookie和请求参数总的_xsrf复制出来<br>
+打开[网页](https://www.zhihu.com/topics),使用开发者工具network功能,往下翻会自动加载下一页,找到TopicFeedList这个请求,将cookie和请求参数总的_xsrf复制出来<br>
 将cookie填到config/zhihu.json中的cookie中,在数据库执行
 UPDATE `node-crawler`.`_system_config` SET `val`='_xsrf' WHERE `id`='1466042978';(其中_xsrf就是刚刚复制出来的值)<br>
 打开控制台,进入项目文件夹根目录<br>npm install<br>完成后<br>node bin/www<br>既可启动<br>
