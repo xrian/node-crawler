@@ -17,3 +17,24 @@
 将cookie填到config/zhihu.json中的cookie中,在数据库执行
 UPDATE `node-crawler`.`_system_config` SET `val`='_xsrf' WHERE `id`='1466042978';(其中_xsrf就是刚刚复制出来的值)<br>
 打开控制台,进入项目文件夹根目录,npm install,完成后node bin/www既可启动
+
+文件目录说明
+-
+bin
+>www     启动文件
+common   公共目录
+>models
+>>_systemConfig.js    _system_config表的实体
+>servlet
+>>_systemConfig.js    一些常用操作_system_config表的方法
+config      配置文件
+crawler     爬虫代码
+>controller     主要逻辑代码目录
+>models         实体
+>servlet        模型
+logs        日志文件
+node_modules    插件列表
+public    静态资源
+routes    路由
+utils     工具类
+views     试图文件
